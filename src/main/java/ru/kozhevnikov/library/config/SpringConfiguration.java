@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -33,7 +34,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public SpringResourceTemplateResolver templateResolver() {
+    public SpringResourceTemplateResolver templateResolver(){
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(applicationContext);
         templateResolver.setPrefix("/WEB-INF/views/");
@@ -41,13 +42,12 @@ public class SpringConfiguration implements WebMvcConfigurer {
         templateResolver.setCharacterEncoding("UTF-8");
         return templateResolver;
     }
-
     @Bean
-    public SpringTemplateEngine templateEngine() {
-        SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
-        springTemplateEngine.setTemplateResolver(templateResolver());
-        springTemplateEngine.setEnableSpringELCompiler(true);
-        return springTemplateEngine;
+    public SpringTemplateEngine templateEngine(){
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
+        templateEngine.setEnableSpringELCompiler(true);
+        return templateEngine;
     }
 
     @Override
@@ -57,14 +57,19 @@ public class SpringConfiguration implements WebMvcConfigurer {
         resolver.setCharacterEncoding("UTF-8");
         registry.viewResolver(resolver);
     }
-
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("driver")));
         dataSource.setUrl(environment.getProperty("url"));
         dataSource.setUsername(environment.getProperty("name"));
         dataSource.setPassword(environment.getProperty("password"));
+
         return dataSource;
     }
+    @Bean
+    public JdbcTemplate jdbcTemplate(){
+        return new JdbcTemplate(dataSource());
+    }
 }
+
