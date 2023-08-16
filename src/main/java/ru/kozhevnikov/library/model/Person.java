@@ -1,6 +1,7 @@
 package ru.kozhevnikov.library.model;
 
 import javax.validation.constraints.*;
+import java.util.List;
 
 public class Person {
     private int personId;
@@ -12,13 +13,24 @@ public class Person {
     @Max(value = 2022, message = "Год рождения введен некорректно")
     private int year;
 
+    private List<Book> takenBooks;
+
     public Person() {
     }
 
-    public Person(int personId, String name, int year) {
+    public Person(int personId, String name, int year, List<Book> takenBooks) {
         this.personId = personId;
         this.name = name;
         this.year = year;
+        this.takenBooks = takenBooks;
+    }
+
+    public List<Book> getTakenBooks() {
+        return takenBooks;
+    }
+
+    public void setTakenBooks(List<Book> takenBooks) {
+        this.takenBooks = takenBooks;
     }
 
     public int getPersonId() {
