@@ -1,12 +1,19 @@
 package ru.kozhevnikov.library.model;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 public class Book {
     private int bookId;
     private Integer personId;
+    @NotBlank(message = "Введите название книги")
     private String name;
+    @NotBlank(message = "Поле обязательно для заполнения")
+    @Pattern(regexp = "^[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+$", message = "Автор должен быть указан в формате (Брюс Эккель)")
     private String author;
+    @Max(value = 2023, message = "Год издания введен некорректно")
     private int year;
 
     public Book() {
