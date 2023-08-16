@@ -7,7 +7,21 @@
 <body>
     <p th:text="${person.getName()} + ', ' + ${person.getYear()}">VALUE</p>
 <br/>
-</hr>
+
+    <div th:unless="${person.getTakenBooks().isEmpty()}">
+        <hr/>
+        <p style="font-weight: bold">Книги:</p>
+        <div th:each="personBooks : ${person.getTakenBooks()}">
+        <p th:text="${personBooks.getName()} + ', ' + ${personBooks.getAuthor()} + ', ' + ${personBooks.getYear()}">values</p>
+        </div>
+        <hr/>
+    </div>
+    <div th:if="${person.getTakenBooks().isEmpty()}">
+        Человек не взял ни одной книги
+        <hr/>
+    </div>
+<br/>
+
     <form th:method="Get" th:action="@{/people/{id}/edit(id=${person.getPersonId()})}" th:object="${person}">
         <input type="submit" value="Редактировать">
     </form>
