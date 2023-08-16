@@ -16,8 +16,8 @@
         </div>
         <hr/>
     </div>
-    <div th:if="${person.getTakenBooks().isEmpty()}">
-        Человек не взял ни одной книги
+    <div style="font-weight: bold" th:if="${person.getTakenBooks().isEmpty()}">
+        Книги у читателя отсутсвуют
         <hr/>
     </div>
 <br/>
