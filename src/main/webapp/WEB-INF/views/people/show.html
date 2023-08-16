@@ -12,7 +12,8 @@
         <hr/>
         <p style="font-weight: bold">Книги:</p>
         <div th:each="personBooks : ${person.getTakenBooks()}">
-        <p th:text="${personBooks.getName()} + ', ' + ${personBooks.getAuthor()} + ', ' + ${personBooks.getYear()}">values</p>
+        <a th:href="@{/books/{id}(id=${personBooks.getBookId()})}"
+                th:text="${personBooks.getName()} + ', ' + ${personBooks.getAuthor()} + ', ' + ${personBooks.getYear()}">values</a>
         </div>
         <hr/>
     </div>
