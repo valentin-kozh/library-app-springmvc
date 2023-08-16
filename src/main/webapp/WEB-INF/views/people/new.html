@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Дабовление нового читателя</title>
+    <title>Добавление нового читателя</title>
 </head>
 <body>
   <form th:method="POST" th:action="@{/people/{id}(id=${person.getPersonId()})}" th:object="${person}">
