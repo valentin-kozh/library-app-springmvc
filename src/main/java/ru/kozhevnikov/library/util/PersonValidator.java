@@ -28,4 +28,11 @@ public class PersonValidator implements Validator {
             errors.rejectValue("name", "", "Пользователь с таким именем уже существует");
         if (person.getYear() <= 1900) errors.rejectValue("year", "", "Год указан неверно");
     }
+
+    public void validate(Object target, Errors errors, int id) {
+        Person person = (Person) target;
+        if (personDAO.show(person.getName()).isPresent() && !person.getName().equals(personDAO.show(id).getName()))
+            errors.rejectValue("name", "", "Пользователь с таким именем уже существует");
+        if (person.getYear() <= 1900) errors.rejectValue("year", "", "Год указан неверно");
+    }
 }
