@@ -1,6 +1,7 @@
 package ru.kozhevnikov.library.model;
 
 import javax.validation.constraints.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Person {
@@ -13,16 +14,14 @@ public class Person {
     @Max(value = 2022, message = "Год рождения введен некорректно")
     private int year;
 
-    private List<Book> takenBooks;
+    private List<Book> takenBooks = new ArrayList<>();
 
     public Person() {
     }
 
-    public Person(int personId, String name, int year, List<Book> takenBooks) {
-        this.personId = personId;
+    public Person(String name, int year) {
         this.name = name;
         this.year = year;
-        this.takenBooks = takenBooks;
     }
 
     public List<Book> getTakenBooks() {
