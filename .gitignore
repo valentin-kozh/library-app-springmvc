@@ -10,6 +10,7 @@ gen### macOS template
 
 #Database
 database.properties
+hibernate.properties
 
 # General
 .DS_Store
