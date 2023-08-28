@@ -8,7 +8,7 @@
     <p th:text="${person.getName()} + ', ' + ${person.getYear()}">VALUE</p>
 <br/>
     <div style="font-weight: bold" th:if="${books.isEmpty()}">
-        Книги у читателя отсутсвуют
+        <p>Книги у читателя отсутсвуют</p>
         <hr/>
     </div>
     <div th:if="${!books.isEmpty()}">

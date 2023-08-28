@@ -1,16 +1,19 @@
 package ru.kozhevnikov.library.controllers;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kozhevnikov.library.modelDAO.BookDAO;
+import ru.kozhevnikov.library.models.Book;
 import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.modelDAO.PersonDAO;
 import ru.kozhevnikov.library.util.PersonValidator;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/people")
@@ -33,8 +36,9 @@ public class PeopleController {
     }
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("person", personDAO.show(id));
-        model.addAttribute("books", personDAO.show(id).getBooks());
+        Person person = personDAO.show(id);
+        model.addAttribute("person", person);
+        model.addAttribute("books", bookDAO.index(person));
         return "people/show";
     }
     @GetMapping("/new")

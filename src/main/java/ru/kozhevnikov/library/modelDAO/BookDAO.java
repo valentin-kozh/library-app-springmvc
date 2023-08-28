@@ -3,8 +3,6 @@ package ru.kozhevnikov.library.modelDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Book;
@@ -27,6 +25,12 @@ public class BookDAO {
         List<Book> books = session.createQuery("Select b from Book b", Book.class).getResultList();
         return books;
     }
+    public List<Book> index(Person person){
+        Session session = sessionFactory.getCurrentSession();
+        List<Book> books = session.createQuery("SELECT b from Book b where b.owner=:owner")
+                .setParameter("owner", person).getResultList();
+        return books;
+    }
     public Book show(int id){
         Session session = sessionFactory.getCurrentSession();
         return session.get(Book.class,id);
@@ -39,7 +43,7 @@ public class BookDAO {
     @Transactional
     public void save(Book book){
         Session session = sessionFactory.getCurrentSession();
-        session.save(book);
+        session.persist(book);
     }
     @Transactional
     public void update(int id, Book updatedBook){
@@ -60,13 +64,22 @@ public class BookDAO {
         Session session = sessionFactory.getCurrentSession();
         return Optional.ofNullable(session.get(Book.class, id).getOwner());
     }
+    @Transactional
     public void assign(Person person, Book book){
         int id = person.getId();
         Session session = sessionFactory.getCurrentSession();
         Person personToUpdate = session.get(Person.class,id);
         personToUpdate.getBooks().add(book);
-
     }
+    @Transactional
+    public void assign(int bookId, Person person){
+        Session session = sessionFactory.getCurrentSession();
+        int personID = person.getId();
+        Person personToUpdate = session.get(Person.class,personID);
+        Book assignedBook = session.get(Book.class,bookId);
+        personToUpdate.addBook(assignedBook);
+    }
+    @Transactional
     public void release(int id){
         Session session = sessionFactory.getCurrentSession();
         Book book = session.get(Book.class, id);

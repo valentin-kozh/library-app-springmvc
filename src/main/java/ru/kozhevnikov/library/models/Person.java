@@ -21,7 +21,7 @@ public class Person {
     @Column(name = "year")
     @Max(value = 2022, message = "Год рождения введен некорректно")
     private int year;
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
     private List<Book> books;
 
     public Person() {
@@ -66,5 +66,13 @@ public class Person {
         }
         this.books.add(book);
         book.setOwner(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", year=" + year +
+                '}';
     }
 }
