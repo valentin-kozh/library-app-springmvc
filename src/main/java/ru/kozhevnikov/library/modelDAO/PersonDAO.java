@@ -1,9 +1,10 @@
 package ru.kozhevnikov.library.modelDAO;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Book;
 import ru.kozhevnikov.library.models.Person;
 
@@ -11,47 +12,46 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@Transactional(readOnly = true)
 public class PersonDAO {
-
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
     @Autowired
-    public PersonDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public PersonDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
+
     public List<Person> index() {
-        return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
+        Session session = sessionFactory.getCurrentSession();
+        List<Person> people = session.createQuery(
+                "SELECT p FROM Person p", Person.class
+        ).getResultList();
+        return people;
     }
     public Person show(int id) {
-        List<Book> books =
-                jdbcTemplate.query(
-                        "SELECT * FROM person JOIN book ON person.person_id = book.person_id WHERE person.person_id=?",
-                        new Object[]{id},
-                        new BeanPropertyRowMapper<>(Book.class));
-        Person person = jdbcTemplate.query("SELECT * FROM Person WHERE person_id=?", new Object[]{id},
-                new BeanPropertyRowMapper<>(Person.class)).stream().findAny().orElse(null);
-        person.setBooks(books);
-
-        return person;
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Person.class, id);
     }
     public Optional<Person> show(String name) {
-        return jdbcTemplate.query("SELECT * FROM Person WHERE name=?", new Object[]{name},
-                new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("SELECT p FROM Person p where p.name=:name", Person.class)
+                .setParameter("name", name).stream().findAny();
     }
+    @Transactional
     public void save(Person person){
-        jdbcTemplate.update(
-          "INSERT INTO Person (name, year) VALUES (?,?)", person.getName(), person.getYear()
-        );
+        Session session = sessionFactory.getCurrentSession();
+        session.save(person);
     }
-    public void update(int id, Person person){
-        jdbcTemplate.update(
-                "UPDATE Person SET name=?, year=? WHERE person_id=?",
-                person.getName(), person.getYear(), id
-        );
+    @Transactional
+    public void update(int id, Person updatedPerson){
+        Session session = sessionFactory.getCurrentSession();
+        Person personToBeUpdated = session.get(Person.class,id);
+        personToBeUpdated.setName(updatedPerson.getName());
+        personToBeUpdated.setBooks(updatedPerson.getBooks());
+        personToBeUpdated.setYear(updatedPerson.getYear());
     }
+    @Transactional
     public void delete(int id){
-        jdbcTemplate.update(
-                "DELETE FROM Person WHERE person_id=?",
-                id
-        );
+        Session session = sessionFactory.getCurrentSession();
+        session.remove(session.get(Person.class,id));
     }
 }

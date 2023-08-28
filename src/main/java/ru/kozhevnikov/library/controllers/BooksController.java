@@ -63,7 +63,7 @@ public class BooksController {
                          BindingResult bindingResult) {
         bookValidator.validate(book, bindingResult, id);
         if (bindingResult.hasErrors()) return "books/edit";
-        bookDAO.update(book, id);
+        bookDAO.update(id, book);
         return "redirect:/books";
     }
 
