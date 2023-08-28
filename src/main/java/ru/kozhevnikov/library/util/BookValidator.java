@@ -5,14 +5,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.kozhevnikov.library.models.Book;
-import ru.kozhevnikov.library.modelDAO.BookDAO;
+import ru.kozhevnikov.library.services.BooksService;
 
 @Component
 public class BookValidator implements Validator {
-    private final BookDAO bookDAO;
+    private final BooksService booksService;
     @Autowired
-    public BookValidator(BookDAO bookDAO) {
-        this.bookDAO = bookDAO;
+    public BookValidator(BooksService booksService) {
+        this.booksService = booksService;
     }
 
     @Override
@@ -23,14 +23,14 @@ public class BookValidator implements Validator {
 
     public void validate(Object target, Errors errors, int id) {
         Book book = (Book) target;
-        if (bookDAO.show(book.getName()).isPresent() && !book.getName().equals(bookDAO.show(id).getName()))
+        if (booksService.findOne(book.getName()).isPresent() && !book.getName().equals(booksService.findOne(id).getName()))
             errors.rejectValue("name", "", "Книга уже добавлена в спсиок");
     }
     @Override
     public void validate(Object target, Errors errors) {
         Book book = (Book) target;
 
-        if (bookDAO.show(book.getName()).isPresent())
+        if (booksService.findOne(book.getName()).isPresent())
             errors.rejectValue("name", "", "Книга уже добавлена в спсиок");
     }
 }
