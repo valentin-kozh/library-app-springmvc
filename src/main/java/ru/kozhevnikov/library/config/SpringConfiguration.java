@@ -26,10 +26,10 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan("ru.kozhevnikov.library")
-@EnableWebMvc
 @PropertySource("classpath:hibernate.properties")
 @EnableTransactionManagement
 @EnableJpaRepositories("ru.kozhevnikov.library.repositories")
+@EnableWebMvc
 public class SpringConfiguration implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
     private final Environment environment;
@@ -39,7 +39,6 @@ public class SpringConfiguration implements WebMvcConfigurer {
         this.applicationContext = applicationContext;
         this.environment = environment;
     }
-
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -90,7 +89,7 @@ public class SpringConfiguration implements WebMvcConfigurer {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan("ru.alishev.springcourse.models");
+        em.setPackagesToScan("ru.kozhevnikov.library.models");
 
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
