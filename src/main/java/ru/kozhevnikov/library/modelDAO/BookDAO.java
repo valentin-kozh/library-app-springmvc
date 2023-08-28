@@ -60,13 +60,16 @@ public class BookDAO {
         Session session = sessionFactory.getCurrentSession();
         return Optional.ofNullable(session.get(Book.class, id).getOwner());
     }
-    public void assign(Person person){
+    public void assign(Person person, Book book){
         int id = person.getId();
-
+        Session session = sessionFactory.getCurrentSession();
+        Person personToUpdate = session.get(Person.class,id);
+        personToUpdate.getBooks().add(book);
 
     }
-//    public void release(int id){
-//        jdbcTemplate.update("UPDATE Book SET person_id=? WHERE book_id=?",
-//                null, id);
-//    }
+    public void release(int id){
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+        book.setOwner(null);
+    }
 }

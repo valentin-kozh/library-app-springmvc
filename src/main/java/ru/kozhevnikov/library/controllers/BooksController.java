@@ -78,15 +78,15 @@ public class BooksController {
 
     @PatchMapping("{id}/assign")
     public String take(@PathVariable("id") int id, @ModelAttribute("person") Person person) {
-        bookDAO.assign(person);
+        bookDAO.assign(person, bookDAO.show(id));
         return "redirect:/books/" + id;
     }
-//
-//    @PatchMapping("/{id}/release")
-//    public String release(@PathVariable("id") int id) {
-//        bookDAO.release(id);
-//        return "redirect:/books/" + id;
-//    }
+
+    @PatchMapping("/{id}/release")
+    public String release(@PathVariable("id") int id) {
+        bookDAO.release(id);
+        return "redirect:/books/" + id;
+    }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
