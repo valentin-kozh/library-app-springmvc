@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ru.kozhevnikov.library.model.Book;
+import ru.kozhevnikov.library.models.Book;
 import ru.kozhevnikov.library.modelDAO.BookDAO;
-
-import java.util.Optional;
 
 @Component
 public class BookValidator implements Validator {

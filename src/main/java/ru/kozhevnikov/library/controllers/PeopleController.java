@@ -5,8 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.kozhevnikov.library.model.Person;
-import ru.kozhevnikov.library.modelDAO.BookDAO;
+import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.modelDAO.PersonDAO;
 import ru.kozhevnikov.library.util.PersonValidator;
 

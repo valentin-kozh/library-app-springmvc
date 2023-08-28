@@ -1,4 +1,4 @@
-package ru.kozhevnikov.library.model;
+package ru.kozhevnikov.library.models;
 
 import javax.validation.constraints.*;
 import java.util.ArrayList;

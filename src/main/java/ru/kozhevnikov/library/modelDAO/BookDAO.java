@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.kozhevnikov.library.model.Book;
+import ru.kozhevnikov.library.models.Book;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,9 +1,8 @@
-package ru.kozhevnikov.library.model;
+package ru.kozhevnikov.library.models;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.List;
 
 public class Book {
     private int bookId;
