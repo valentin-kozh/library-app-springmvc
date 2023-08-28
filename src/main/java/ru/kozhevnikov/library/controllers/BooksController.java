@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.kozhevnikov.library.models.Book;
 import ru.kozhevnikov.library.modelDAO.BookDAO;
 import ru.kozhevnikov.library.modelDAO.PersonDAO;
+import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.util.BookValidator;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
@@ -35,7 +37,14 @@ public class BooksController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("book", bookDAO.show(id));
-        model.addAttribute("people", personDAO.index());
+
+        Optional<Person> owner = bookDAO.getBookOwner(id);
+        if (owner.isPresent()){
+            model.addAttribute("owner", owner);
+        }
+        else {
+            model.addAttribute("people", personDAO.index());
+        }
         return "books/show";
     }
 
@@ -67,18 +76,17 @@ public class BooksController {
         return "redirect:/books";
     }
 
-    @PatchMapping("{id}/take")
-    public String take(@PathVariable("id") int id, @RequestParam(value = "personId") Integer personId) {
-        bookDAO.take(personId, id);
+    @PatchMapping("{id}/assign")
+    public String take(@PathVariable("id") int id, @ModelAttribute("person") Person person) {
+        bookDAO.assign(person);
         return "redirect:/books/" + id;
     }
-
-    @PatchMapping("/{id}/release")
-    public String release(@PathVariable("id") int id) {
-        bookDAO.release(id);
-        return "redirect:/books/" + id;
-    }
-
+//
+//    @PatchMapping("/{id}/release")
+//    public String release(@PathVariable("id") int id) {
+//        bookDAO.release(id);
+//        return "redirect:/books/" + id;
+//    }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {

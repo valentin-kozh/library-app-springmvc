@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Book;
+import ru.kozhevnikov.library.models.Person;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,10 +55,16 @@ public class BookDAO {
         Session session = sessionFactory.getCurrentSession();
         session.remove(session.get(Book.class,id));
     }
-//    public void take(Integer personId, int id){
-//        jdbcTemplate.update("UPDATE Book SET person_id=? WHERE book_id=?",
-//                personId, id);
-//    }
+    @Transactional
+    public Optional<Person> getBookOwner(int id){
+        Session session = sessionFactory.getCurrentSession();
+        return Optional.ofNullable(session.get(Book.class, id).getOwner());
+    }
+    public void assign(Person person){
+        int id = person.getId();
+
+
+    }
 //    public void release(int id){
 //        jdbcTemplate.update("UPDATE Book SET person_id=? WHERE book_id=?",
 //                null, id);
