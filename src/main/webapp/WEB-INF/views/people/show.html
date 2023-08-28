@@ -8,26 +8,26 @@
     <p th:text="${person.getName()} + ', ' + ${person.getYear()}">VALUE</p>
 <br/>
 
-    <div th:unless="${person.getTakenBooks().isEmpty()}">
+    <div th:unless="${person.getBooks().isEmpty()}">
         <hr/>
         <p style="font-weight: bold">Книги:</p>
-        <div th:each="personBooks : ${person.getTakenBooks()}">
-        <a th:href="@{/books/{id}(id=${personBooks.getBookId()})}"
+        <div th:each="personBooks : ${person.getBooks()}">
+        <a th:href="@{/books/{id}(id=${personBooks.getId()})}"
                 th:text="${personBooks.getName()} + ', ' + ${personBooks.getAuthor()} + ', ' + ${personBooks.getYear()}">values</a>
         </div>
         <hr/>
     </div>
-    <div style="font-weight: bold" th:if="${person.getTakenBooks().isEmpty()}">
+    <div style="font-weight: bold" th:if="${person.getBooks().isEmpty()}">
         Книги у читателя отсутсвуют
         <hr/>
     </div>
 <br/>
 
-    <form th:method="Get" th:action="@{/people/{id}/edit(id=${person.getPersonId()})}" th:object="${person}">
+    <form th:method="Get" th:action="@{/people/{id}/edit(id=${person.getId()})}" th:object="${person}">
         <input type="submit" value="Редактировать">
     </form>
     <br/>
-    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getPersonId()})}" th:object="${person}">
+    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}" th:object="${person}">
         <input type="submit" value="Удалить">
     </form>
 <br/><br/>

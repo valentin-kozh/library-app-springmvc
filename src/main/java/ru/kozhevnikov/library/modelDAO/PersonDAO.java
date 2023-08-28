@@ -29,7 +29,7 @@ public class PersonDAO {
                         new BeanPropertyRowMapper<>(Book.class));
         Person person = jdbcTemplate.query("SELECT * FROM Person WHERE person_id=?", new Object[]{id},
                 new BeanPropertyRowMapper<>(Person.class)).stream().findAny().orElse(null);
-        person.setTakenBooks(books);
+        person.setBooks(books);
 
         return person;
     }
