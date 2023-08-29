@@ -3,6 +3,8 @@ package ru.kozhevnikov.library.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,12 +36,20 @@ public class PeopleController {
     @GetMapping()
     public String index(Model model,
                         @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("people_per_page") Optional<Integer> peoplePerPage){
+                        @RequestParam("people_per_page") Optional<Integer> peoplePerPage,
+                        @RequestParam(value = "sort_by_name", required = false) boolean sortByName,
+                        @RequestParam(value = "sort_by_year", required = false) boolean sortByYear){
+
         final int currentPage = page.orElse(1);
         final int pageSize = peoplePerPage.orElse(5);
 
+        model.addAttribute("sortByName", sortByName);
+        model.addAttribute("sortByYear", sortByYear);
 
-        Page<Person> personPage = peopleService.findPaginated(PageRequest.of(currentPage-1, pageSize));
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize);
+
+        Page<Person> personPage = peopleService.findPaginated(pageable, sortByName, sortByYear);
+
         model.addAttribute("personPage", personPage);
 
         int totalPages = personPage.getTotalPages();

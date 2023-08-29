@@ -17,6 +17,7 @@
         color: white;
         border-radius: 2px;
     }
+
     table {
         border-collapse: collapse;
     }
@@ -24,6 +25,10 @@
     td, th {
         border: 1px solid black;
         padding: 8px; /* Добавьте отступы для контента */
+    }
+
+    .right-align {
+        float: right;
     }
 </style>
 <head>
@@ -45,23 +50,31 @@
 <table>
     <thead>
     <tr>
-        <th th:text="'ФИО читателя'" />
-        <th th:text="'Год рождения'" />
+        <th>
+            <span>ФИО читателя</span>
+            <a th:href="@{/people(page=1, people_per_page=${personPage.size}, sort_by_name=true, sort_by_year=false)}"
+               class="right-align">&#9650;</a>
+        </th>
+        <th>
+            <span>Год рождения&nbsp;&nbsp;</span>
+            <a th:href="@{/people(page=1, people_per_page=${personPage.size}, sort_by_name=false, sort_by_year=true)}"
+               class="right-align">&#9650;</a>
+        </th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="person : ${personPage}">
         <td>
-           <a th:href = "@{/people/{id}(id=${person.getId()})}"
-            th:text="${person.getName()}"/></td>
-        <td th:text="${person.getYear()}" />
+            <a th:href="@{/people/{id}(id=${person.getId()})}"
+               th:text="${person.getName()}"/></td>
+        <td th:text="${person.getYear()}"/>
     </tr>
     </tbody>
 </table>
 <br/>
 <div th:if="${personPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{'/people'+'?page='+${pageNumber}+'&people_per_page='+${personPage.size}}"
+    <a th:href="@{/people(page=${pageNumber}, people_per_page=${personPage.size}, sort_by_name=${sortByName}, sort_by_year=${sortByYear})}"
        th:text="${pageNumber}"
        th:class="${pageNumber==personPage.number + 1} ? active"></a>
 </div>

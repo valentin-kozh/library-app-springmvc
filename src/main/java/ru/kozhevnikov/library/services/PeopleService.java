@@ -3,16 +3,14 @@ package ru.kozhevnikov.library.services;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.repositories.PeopleRepository;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,13 +50,22 @@ public class PeopleService {
     }
 
     @Transactional
-    public Page<Person> findPaginated(Pageable pageable) {
+    public Page<Person> findPaginated(Pageable pageable, boolean sortByName, boolean sortByYear) {
+        List<Person> people;
+        if(sortByName && !sortByYear) {
+           people = peopleRepository.findAll(Sort.by("name"));
+        }
+        else if (!sortByName && sortByYear) {
+            people = peopleRepository.findAll(Sort.by("year"));
+        }
+        else {
+            people = findAll();
+        }
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = pageSize*currentPage;
 
         List<Person> list;
-        List<Person> people = findAll();
 
         if (people.size() < startItem){
             list = Collections.emptyList();
@@ -67,7 +74,7 @@ public class PeopleService {
             int toIndex = Math.min(startItem+pageSize, people.size());
             list = people.subList(startItem, toIndex);
         }
-        Page<Person> personPage = new PageImpl<>(list,PageRequest.of(currentPage, pageSize), people.size());
-        return personPage;
+        return new PageImpl<>(list,PageRequest.of(currentPage, pageSize), people.size());
     }
+
 }
