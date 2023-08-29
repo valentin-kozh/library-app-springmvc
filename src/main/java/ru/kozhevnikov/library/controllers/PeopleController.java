@@ -1,6 +1,8 @@
 package ru.kozhevnikov.library.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +13,10 @@ import ru.kozhevnikov.library.services.PeopleService;
 import ru.kozhevnikov.library.util.PersonValidator;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/people")
@@ -26,8 +32,24 @@ public class PeopleController {
     }
 
     @GetMapping()
-    public String index(Model model){
-        model.addAttribute("people", peopleService.findAll());
+    public String index(Model model,
+                        @RequestParam("page") Optional<Integer> page,
+                        @RequestParam("peoplePerPage") Optional<Integer> peoplePerPage){
+        final int currentPage = page.orElse(1);
+        final int pageSize = peoplePerPage.orElse(5);
+
+        model.addAttribute("pageSize", peoplePerPage);
+
+        Page<Person> personPage = peopleService.findPaginated(PageRequest.of(currentPage-1, pageSize));
+        model.addAttribute("personPage", personPage);
+
+        int totalPages = personPage.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         return "people/index";
     }
     @GetMapping("/{id}")

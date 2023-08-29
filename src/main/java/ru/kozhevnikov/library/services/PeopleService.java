@@ -3,11 +3,16 @@ package ru.kozhevnikov.library.services;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.repositories.PeopleRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +49,25 @@ public class PeopleService {
     @Transactional
     public void delete(int id){
         peopleRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Page<Person> findPaginated(Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = pageSize*currentPage;
+
+        List<Person> list;
+        List<Person> people = findAll();
+
+        if (people.size() < startItem){
+            list = Collections.emptyList();
+        }
+        else {
+            int toIndex = Math.min(startItem+pageSize, people.size());
+            list = people.subList(startItem, toIndex);
+        }
+        Page<Person> personPage = new PageImpl<>(list,PageRequest.of(currentPage, pageSize), people.size());
+        return personPage;
     }
 }
