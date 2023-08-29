@@ -32,8 +32,8 @@
 </head>
 <body>
 <form th:method="GET" th:action="@{/books}">
-    <label for="booksPerPage">Книг на странице:</label>
-    <select name="booksPerPage" id="booksPerPage">
+    <label for="books_per_page">Книг на странице:</label>
+    <select name="books_per_page" id="books_per_page">
         <option value="5" th:selected="${bookPage.size == 5}">5</option>
         <option value="10" th:selected="${bookPage.size == 10}">10</option>
         <option value="15" th:selected="${bookPage.size == 15}">15</option>
@@ -63,7 +63,7 @@
 <br/>
 <div th:if="${bookPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{'/books'+'?page='+${pageNumber}+'&booksPerPage='+${bookPage.size}}"
+    <a th:href="@{'/books'+'?page='+${pageNumber}+'&books_per_page='+${bookPage.size}}"
        th:text="${pageNumber}"
        th:class="${pageNumber==bookPage.number + 1} ? active"></a>
 </div>

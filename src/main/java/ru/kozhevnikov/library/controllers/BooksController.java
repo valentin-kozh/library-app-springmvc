@@ -36,7 +36,7 @@ public class BooksController {
     @GetMapping()
     public String index(Model model,
                         @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("booksPerPage") Optional<Integer> booksPerPage) {
+                        @RequestParam("books_per_page") Optional<Integer> booksPerPage) {
         final int currentPage = page.orElse(1);
         final int pageSize = booksPerPage.orElse(5);
 

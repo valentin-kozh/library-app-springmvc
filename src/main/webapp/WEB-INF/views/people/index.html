@@ -32,8 +32,8 @@
 </head>
 <body>
 <form th:method="GET" th:action="@{/people}">
-    <label for="peoplePerPage">Читателей на странице:</label>
-    <select name="peoplePerPage" id="peoplePerPage">
+    <label for="people_per_page">Читателей на странице:</label>
+    <select name="people_per_page" id="people_per_page">
         <option value="5" th:selected="${personPage.size == 5}">5</option>
         <option value="10" th:selected="${personPage.size == 10}">10</option>
         <option value="15" th:selected="${personPage.size == 15}">15</option>
@@ -61,7 +61,7 @@
 <br/>
 <div th:if="${personPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{'/people'+'?page='+${pageNumber}+'&peoplePerPage='+${personPage.size}}"
+    <a th:href="@{'/people'+'?page='+${pageNumber}+'&people_per_page='+${personPage.size}}"
        th:text="${pageNumber}"
        th:class="${pageNumber==personPage.number + 1} ? active"></a>
 </div>

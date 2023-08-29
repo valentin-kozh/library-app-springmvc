@@ -34,7 +34,7 @@ public class PeopleController {
     @GetMapping()
     public String index(Model model,
                         @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("peoplePerPage") Optional<Integer> peoplePerPage){
+                        @RequestParam("people_per_page") Optional<Integer> peoplePerPage){
         final int currentPage = page.orElse(1);
         final int pageSize = peoplePerPage.orElse(5);
 
