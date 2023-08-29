@@ -2,6 +2,10 @@ package ru.kozhevnikov.library.services;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Book;
@@ -9,6 +13,7 @@ import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.repositories.BooksRepository;
 import ru.kozhevnikov.library.repositories.PeopleRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,5 +72,24 @@ public class BooksService {
                 .findById(id)
                 .get()
                 .setOwner(null);
+    }
+
+    @Transactional
+    public Page<Book> findPaginated(Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = pageSize*currentPage;
+
+        List<Book> list;
+        List<Book> books = findAll();
+        if (startItem > books.size()){
+            list = Collections.emptyList();
+        }
+        else {
+            int toIndex = Math.min(startItem+pageSize, books.size());
+            list = books.subList(startItem,toIndex);
+        }
+        Page<Book> bookPage = new PageImpl<>(list, PageRequest.of(currentPage, pageSize), books.size());
+        return bookPage;
     }
 }

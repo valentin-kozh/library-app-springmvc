@@ -38,7 +38,6 @@ public class PeopleController {
         final int currentPage = page.orElse(1);
         final int pageSize = peoplePerPage.orElse(5);
 
-        model.addAttribute("pageSize", peoplePerPage);
 
         Page<Person> personPage = peopleService.findPaginated(PageRequest.of(currentPage-1, pageSize));
         model.addAttribute("personPage", personPage);

@@ -1,6 +1,8 @@
 package ru.kozhevnikov.library.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,7 +14,10 @@ import ru.kozhevnikov.library.services.PeopleService;
 import ru.kozhevnikov.library.util.BookValidator;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/books")
@@ -29,8 +34,23 @@ public class BooksController {
     }
 
     @GetMapping()
-    public String index(Model model) {
-        model.addAttribute("books", booksService.findAll());
+    public String index(Model model,
+                        @RequestParam("page") Optional<Integer> page,
+                        @RequestParam("booksPerPage") Optional<Integer> booksPerPage) {
+        final int currentPage = page.orElse(1);
+        final int pageSize = booksPerPage.orElse(5);
+
+
+        Page<Book> bookPage = booksService.findPaginated(PageRequest.of(currentPage-1,pageSize));
+        model.addAttribute("bookPage", bookPage);
+        int totalPages = bookPage.getTotalPages();
+        if (totalPages > 0){
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
         return "books/index";
     }
 
