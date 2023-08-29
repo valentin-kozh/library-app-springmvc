@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface BooksRepository extends JpaRepository<Book, Integer> {
     List<Book> findByOwner(Person owner);
     Optional<Book> findByName(String name);
+    List<Book> findByNameStartingWith(String beginningOfName);
 }

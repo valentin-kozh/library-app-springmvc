@@ -21,50 +21,68 @@ import java.util.Optional;
 public class BooksService {
     private final BooksRepository booksRepository;
     private final PeopleRepository peopleRepository;
+
     @Autowired
     public BooksService(BooksRepository booksRepository, PeopleRepository peopleRepository) {
         this.booksRepository = booksRepository;
         this.peopleRepository = peopleRepository;
     }
-    public List<Book> findAll(){
+
+    public List<Book> findAll() {
         return booksRepository.findAll();
     }
-    public List<Book> findByOwner(Person owner){
+
+    public List<Book> findByOwner(Person owner) {
         return booksRepository.findByOwner(owner);
     }
-    public Book findOne(int id){
+
+    public Book findOne(int id) {
         return booksRepository.findById(id).orElse(null);
     }
-    public Optional<Book> findOne(String name){
+
+    public Optional<Book> findOne(String name) {
         return booksRepository.findByName(name);
     }
+
+    public List<Book> findByNameStartingWith(String beginningOfName) {
+        if (beginningOfName.isBlank()){
+            return Collections.emptyList();
+        }
+        return booksRepository.findByNameStartingWith(beginningOfName);
+    }
+
     @Transactional
-    public void save(Book book){
+    public void save(Book book) {
         booksRepository.save(book);
     }
+
     @Transactional
-    public void update(int id, Book updatedBook){
+    public void update(int id, Book updatedBook) {
         updatedBook.setId(id);
         booksRepository.save(updatedBook);
     }
+
     @Transactional
-    public void delete(int id){
+    public void delete(int id) {
         booksRepository.deleteById(id);
     }
+
     @Transactional
-    public Optional<Person> getBookOwner(int id){
+    public Optional<Person> getBookOwner(int id) {
         Book book = booksRepository.findById(id).orElse(null);
         return Optional.ofNullable(book.getOwner());
     }
+
     @Transactional
-    public void assign(int bookId, Person person){
+    public void assign(int bookId, Person person) {
         int personID = person.getId();
         Person personToUpdate = peopleRepository.findById(personID).get();
         Book assignedBook = booksRepository.findById(bookId).get();
         personToUpdate.addBook(assignedBook);
     }
+
     @Transactional
-    public void release(int id){
+    public void release(int id) {
         booksRepository
                 .findById(id)
                 .get()
@@ -74,23 +92,21 @@ public class BooksService {
     @Transactional
     public Page<Book> findPaginated(Pageable pageable, boolean sortByYear) {
         List<Book> books;
-        if(sortByYear){
+        if (sortByYear) {
             books = booksRepository.findAll(Sort.by("year"));
-        }
-        else {
+        } else {
             books = findAll();
         }
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
-        int startItem = pageSize*currentPage;
+        int startItem = pageSize * currentPage;
 
         List<Book> list;
-        if (startItem > books.size()){
+        if (startItem > books.size()) {
             list = Collections.emptyList();
-        }
-        else {
-            int toIndex = Math.min(startItem+pageSize, books.size());
-            list = books.subList(startItem,toIndex);
+        } else {
+            int toIndex = Math.min(startItem + pageSize, books.size());
+            list = books.subList(startItem, toIndex);
         }
         Page<Book> bookPage = new PageImpl<>(list, PageRequest.of(currentPage, pageSize), books.size());
         return bookPage;

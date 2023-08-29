@@ -1,5 +1,6 @@
 package ru.kozhevnikov.library.controllers;
 
+import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -118,5 +119,13 @@ public class BooksController {
     public String delete(@PathVariable("id") int id) {
         booksService.delete(id);
         return "redirect:/books";
+    }
+    @GetMapping("/search")
+    public String search(Model model,
+                         @RequestParam(value = "beginning_of_name", required = false) String beginningOfName){
+        if(beginningOfName!=null) {
+            model.addAttribute("books", booksService.findByNameStartingWith(beginningOfName));
+        }
+        return "books/search";
     }
 }

@@ -32,6 +32,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Список книг</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 <form th:method="GET" th:action="@{/books}">
@@ -43,6 +44,13 @@
         <option value="20" th:selected="${bookPage.size == 20}">20</option>
     </select>
     <button type="submit">Выбрать</button>
+</form>
+<br/>
+<form method="GET" th:action="@{books/search}">
+    <button type="submit" class="search-button" title="Поиск">
+        <i class="fas fa-search"></i>
+        &nbsp;Поиск
+    </button>
 </form>
 <br/>
 <table>
