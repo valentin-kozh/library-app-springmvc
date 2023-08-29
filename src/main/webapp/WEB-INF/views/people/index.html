@@ -37,6 +37,7 @@
         <option value="5" th:selected="${personPage.size == 5}">5</option>
         <option value="10" th:selected="${personPage.size == 10}">10</option>
         <option value="15" th:selected="${personPage.size == 15}">15</option>
+        <option value="20" th:selected="${personPage.size == 20}">20</option>
     </select>
     <button type="submit">Выбрать</button>
 </form>
@@ -60,7 +61,7 @@
 <br/>
 <div th:if="${personPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{/people(size=${personPage.size}, page=${pageNumber}, peoplePerPage=${personPage.size})}"
+    <a th:href="@{'/people'+'?page='+${pageNumber}+'&peoplePerPage='+${personPage.size}}"
        th:text="${pageNumber}"
        th:class="${pageNumber==personPage.number + 1} ? active"></a>
 </div>
