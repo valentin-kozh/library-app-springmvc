@@ -2,10 +2,7 @@ package ru.kozhevnikov.library.services;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Book;
@@ -75,13 +72,19 @@ public class BooksService {
     }
 
     @Transactional
-    public Page<Book> findPaginated(Pageable pageable) {
+    public Page<Book> findPaginated(Pageable pageable, boolean sortByYear) {
+        List<Book> books;
+        if(sortByYear){
+            books = booksRepository.findAll(Sort.by("year"));
+        }
+        else {
+            books = findAll();
+        }
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = pageSize*currentPage;
 
         List<Book> list;
-        List<Book> books = findAll();
         if (startItem > books.size()){
             list = Collections.emptyList();
         }

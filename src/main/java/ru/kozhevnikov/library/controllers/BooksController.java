@@ -3,6 +3,7 @@ package ru.kozhevnikov.library.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,12 +37,17 @@ public class BooksController {
     @GetMapping()
     public String index(Model model,
                         @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("books_per_page") Optional<Integer> booksPerPage) {
+                        @RequestParam("books_per_page") Optional<Integer> booksPerPage,
+                        @RequestParam(value = "sort_by_year", required = false) boolean sortByYear) {
         final int currentPage = page.orElse(1);
         final int pageSize = booksPerPage.orElse(5);
 
+        model.addAttribute("sortByYear", sortByYear);
 
-        Page<Book> bookPage = booksService.findPaginated(PageRequest.of(currentPage-1,pageSize));
+        Pageable pageable = PageRequest.of(currentPage-1,pageSize);
+
+        Page<Book> bookPage = booksService.findPaginated(pageable, sortByYear);
+
         model.addAttribute("bookPage", bookPage);
         int totalPages = bookPage.getTotalPages();
         if (totalPages > 0){

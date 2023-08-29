@@ -25,6 +25,9 @@
         border: 1px solid black;
         padding: 8px; /* Добавьте отступы для контента */
     }
+    .right-align {
+        float: right;
+    }
 </style>
 <head>
     <meta charset="UTF-8">
@@ -47,7 +50,11 @@
     <tr>
         <th th:text="'Название книги'" />
         <th th:text="'ФИО автора'" />
-        <th th:text="'Год издания'" />
+        <th>
+            <span>Год издания</span>
+            <a th:href="@{/books(page=1, books_per_page=${bookPage.size}, sort_by_year=true)}"
+                class="right-align">&#9650;</a></a>
+        </th>
     </tr>
     </thead>
     <tbody>
@@ -63,7 +70,7 @@
 <br/>
 <div th:if="${bookPage.totalPages > 0}" class="pagination"
      th:each="pageNumber : ${pageNumbers}">
-    <a th:href="@{'/books'+'?page='+${pageNumber}+'&books_per_page='+${bookPage.size}}"
+    <a th:href="@{/books(page=${pageNumber}, books_per_page=${bookPage.size}, sort_by_year=${sortByYear})}"
        th:text="${pageNumber}"
        th:class="${pageNumber==bookPage.number + 1} ? active"></a>
 </div>
