@@ -5,13 +5,14 @@
     <title>Поиск книги</title>
 </head>
 <body>
-<form th:method="GET" th:action="@{/books/search}">
+<form th:method="POST" th:action="@{/books/search}">
     <label for="beginningOfName">Введите поисковый запрос: </label>
     <input type="text" id="beginningOfName" name="beginning_of_name">
     <br/><br/>
     <input type="submit" value="Искать">
 </form>
 <br/>
+<div th:if="${books}">
 <div th:if="${books.isEmpty()}">
     <p>Книг не найдено</p>
 </div>
@@ -27,6 +28,7 @@
             <p th:text="'Книга сейчас у: '+${book.getOwner().getName()}"></p>
         </div>
     </div>
+</div>
 </div>
 <a th:href="@{/books}">Назад</a>
 </body>

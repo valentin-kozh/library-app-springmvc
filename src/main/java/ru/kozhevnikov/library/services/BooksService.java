@@ -1,6 +1,5 @@
 package ru.kozhevnikov.library.services;
 
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -8,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kozhevnikov.library.models.Book;
 import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.repositories.BooksRepository;
-import ru.kozhevnikov.library.repositories.PeopleRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -21,20 +19,13 @@ import java.util.Optional;
 @Service
 public class BooksService {
     private final BooksRepository booksRepository;
-    private final PeopleRepository peopleRepository;
-
     @Autowired
-    public BooksService(BooksRepository booksRepository, PeopleRepository peopleRepository) {
+    public BooksService(BooksRepository booksRepository) {
         this.booksRepository = booksRepository;
-        this.peopleRepository = peopleRepository;
     }
 
     public List<Book> findAll() {
         return booksRepository.findAll();
-    }
-
-    public List<Book> findByOwner(Person owner) {
-        return booksRepository.findByOwner(owner);
     }
 
     public Book findOne(int id) {
@@ -45,12 +36,13 @@ public class BooksService {
         return booksRepository.findByName(name);
     }
 
+
     public List<Book> findByNameStartingWith(String beginningOfName) {
         if (beginningOfName.isBlank()){
             return Collections.emptyList();
         }
-        String ignoreCase = beginningOfName.substring(0,1).toUpperCase()+beginningOfName.substring(1);
-        return booksRepository.findByNameStartingWith(ignoreCase);
+        beginningOfName = beginningOfName.substring(0,1).toUpperCase()+beginningOfName.substring(1);
+        return booksRepository.findByNameStartingWith(beginningOfName);
     }
 
     @Transactional
@@ -72,26 +64,24 @@ public class BooksService {
         booksRepository.deleteById(id);
     }
 
-    @Transactional
-    public Optional<Person> getBookOwner(int id) {
-        Book book = booksRepository.findById(id).orElse(null);
-        return Optional.ofNullable(book.getOwner());
+    public Person getBookOwner(int id) {
+        return booksRepository.findById(id).map(Book::getOwner).orElse(null);
     }
 
     @Transactional
     public void assign(int bookId, Person person) {
-        int personID = person.getId();
-        Person personToUpdate = peopleRepository.findById(personID).get();
-        Book assignedBook = booksRepository.findById(bookId).get();
-        assignedBook.setWasTakenAt(LocalDateTime.now());
-        personToUpdate.addBook(assignedBook);
+        booksRepository.findById(bookId).ifPresent(book -> {
+            book.setOwner(person);
+            book.setWasTakenAt(LocalDateTime.now());
+        });
     }
 
     @Transactional
     public void release(int id) {
-        Book book = booksRepository.findById(id).get();
-        book.setWasTakenAt(null);
-        book.setOwner(null);
+        booksRepository.findById(id).ifPresent(book -> {
+            book.setOwner(null);
+            book.setWasTakenAt(null);
+        });
     }
 
     @Transactional

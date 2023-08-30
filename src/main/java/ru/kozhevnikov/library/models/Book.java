@@ -21,7 +21,6 @@ public class Book {
     private String name;
     @Column(name = "author")
     @NotBlank(message = "Поле обязательно для заполнения")
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+$", message = "Автор должен быть указан в формате (Брюс Эккель)")
     private String author;
     @Column(name = "year")
     @Max(value = 2023, message = "Год издания введен некорректно")
@@ -36,6 +35,8 @@ public class Book {
 
     @Transient
     private boolean isOverdue;
+    @Transient
+    private int daysUntilReturn;
 
     public Book() {
     }
@@ -90,18 +91,20 @@ public class Book {
     }
 
     public boolean isOverdue() {
-        if (getWasTakenAt()==null || getDaysWasTaken() <= 10) return false;
-        return true;
+        return isOverdue;
     }
-    public int getDaysUntilReturn(){
-        int daysUntilReturn = 10 - getDaysWasTaken();
-        if (daysUntilReturn < 0) return 0;
+    public void setOverdue(boolean overdue) {
+        isOverdue = overdue;
+    }
+
+    public int getDaysUntilReturn() {
         return daysUntilReturn;
     }
-    private int getDaysWasTaken(){
-        LocalDateTime currentTime = LocalDateTime.now();
-        return (int) Duration.between(getWasTakenAt(),currentTime).toDays();
+
+    public void setDaysUntilReturn(int daysUntilReturn) {
+        this.daysUntilReturn = daysUntilReturn;
     }
+
     public void setOwner(Person owner) {
         this.owner = owner;
     }

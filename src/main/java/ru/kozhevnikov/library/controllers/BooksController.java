@@ -40,6 +40,7 @@ public class BooksController {
                         @RequestParam("page") Optional<Integer> page,
                         @RequestParam("books_per_page") Optional<Integer> booksPerPage,
                         @RequestParam(value = "sort_by_year", required = false) boolean sortByYear) {
+
         final int currentPage = page.orElse(1);
         final int pageSize = booksPerPage.orElse(5);
 
@@ -63,10 +64,9 @@ public class BooksController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
-        model.addAttribute("book", booksService.findOne(id));
-
-        Optional<Person> owner = booksService.getBookOwner(id);
-        if (owner.isPresent()){
+       model.addAttribute("book", booksService.findOne(id));
+       Person owner = booksService.getBookOwner(id);
+        if (owner != null){
             model.addAttribute("owner", owner);
         }
         else {
@@ -121,6 +121,10 @@ public class BooksController {
         return "redirect:/books";
     }
     @GetMapping("/search")
+    public String search(){
+        return "books/search";
+    }
+    @PostMapping("/search")
     public String search(Model model,
                          @RequestParam(value = "beginning_of_name", required = false) String beginningOfName){
         if(beginningOfName!=null) {
