@@ -19,7 +19,8 @@
   </div>
   <div th:if="${owner}">
       Книга сейчас у:
-      <a th:href="@{/people/{id}(id=${owner.get().getId()})}"
+      <a th:style="'color: '+(${book.isOverdue()} ? 'red' : 'black')"
+      th:href="@{/people/{id}(id=${owner.get().getId()})}"
       th:text="${owner.get().getName()}">Имя</a>
       <br/><br/>
       <form th:method="PATCH" th:action="@{/books/{id}/release(id=${book.getId()})}" th:object="${book}">

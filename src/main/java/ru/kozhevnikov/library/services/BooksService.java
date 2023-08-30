@@ -10,6 +10,7 @@ import ru.kozhevnikov.library.models.Person;
 import ru.kozhevnikov.library.repositories.BooksRepository;
 import ru.kozhevnikov.library.repositories.PeopleRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,17 +49,21 @@ public class BooksService {
         if (beginningOfName.isBlank()){
             return Collections.emptyList();
         }
-        return booksRepository.findByNameStartingWith(beginningOfName);
+        String ignoreCase = beginningOfName.substring(0,1).toUpperCase()+beginningOfName.substring(1);
+        return booksRepository.findByNameStartingWith(ignoreCase);
     }
 
     @Transactional
     public void save(Book book) {
         booksRepository.save(book);
+        book.setWasTakenAt(null);
     }
 
     @Transactional
     public void update(int id, Book updatedBook) {
         updatedBook.setId(id);
+        updatedBook.setOwner(findOne(id).getOwner());
+        updatedBook.setWasTakenAt(findOne(id).getWasTakenAt());
         booksRepository.save(updatedBook);
     }
 
@@ -78,15 +83,15 @@ public class BooksService {
         int personID = person.getId();
         Person personToUpdate = peopleRepository.findById(personID).get();
         Book assignedBook = booksRepository.findById(bookId).get();
+        assignedBook.setWasTakenAt(LocalDateTime.now());
         personToUpdate.addBook(assignedBook);
     }
 
     @Transactional
     public void release(int id) {
-        booksRepository
-                .findById(id)
-                .get()
-                .setOwner(null);
+        Book book = booksRepository.findById(id).get();
+        book.setWasTakenAt(null);
+        book.setOwner(null);
     }
 
     @Transactional

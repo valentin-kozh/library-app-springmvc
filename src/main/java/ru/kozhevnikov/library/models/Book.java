@@ -1,9 +1,13 @@
 package ru.kozhevnikov.library.models;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Book")
@@ -25,6 +29,13 @@ public class Book {
     @ManyToOne()
     @JoinColumn(name = "person_id", referencedColumnName = "person_id")
     private Person owner;
+
+    @Column(name = "was_taken")
+    @CreationTimestamp
+    private LocalDateTime wasTakenAt;
+
+    @Transient
+    private boolean isOverdue;
 
     public Book() {
     }
@@ -70,7 +81,27 @@ public class Book {
     public Person getOwner() {
         return owner;
     }
+    public LocalDateTime getWasTakenAt() {
+        return wasTakenAt;
+    }
 
+    public void setWasTakenAt(LocalDateTime wasTakenAt) {
+        this.wasTakenAt = wasTakenAt;
+    }
+
+    public boolean isOverdue() {
+        if (getWasTakenAt()==null || getDaysWasTaken() <= 10) return false;
+        return true;
+    }
+    public int getDaysUntilReturn(){
+        int daysUntilReturn = 10 - getDaysWasTaken();
+        if (daysUntilReturn < 0) return 0;
+        return daysUntilReturn;
+    }
+    private int getDaysWasTaken(){
+        LocalDateTime currentTime = LocalDateTime.now();
+        return (int) Duration.between(getWasTakenAt(),currentTime).toDays();
+    }
     public void setOwner(Person owner) {
         this.owner = owner;
     }
