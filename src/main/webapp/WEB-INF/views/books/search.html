@@ -5,7 +5,7 @@
     <title>Поиск книги</title>
 </head>
 <body>
-<form th:method="GET" th:action="@{/books/search}">
+<form th:method="POST" th:action="@{/books/search}">
     <label for="beginningOfName">Введите поисковый запрос: </label>
     <input type="text" id="beginningOfName" name="beginning_of_name">
     <br/><br/>

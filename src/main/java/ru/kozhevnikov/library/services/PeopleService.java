@@ -1,16 +1,18 @@
 package ru.kozhevnikov.library.services;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kozhevnikov.library.models.Book;
 import ru.kozhevnikov.library.models.Person;
+import ru.kozhevnikov.library.repositories.BooksRepository;
 import ru.kozhevnikov.library.repositories.PeopleRepository;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,16 +23,34 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class PeopleService {
     private final PeopleRepository peopleRepository;
+    private final BooksRepository booksRepository;
     @Autowired
-    public PeopleService(PeopleRepository peopleRepository) {
+    public PeopleService(PeopleRepository peopleRepository, BooksRepository booksRepository) {
         this.peopleRepository = peopleRepository;
+        this.booksRepository = booksRepository;
     }
     public List<Person> findAll() {
         return peopleRepository.findAll();
     }
     public Person findOne(int id) {
-        Optional<Person> foundPerson = peopleRepository.findById(id);
-        return foundPerson.orElse(null);
+        Optional<Person> person = peopleRepository.findById(id);
+        return person.orElse(null);
+    }
+    public List<Book> getBooksByPersonId(int id){
+        Optional<Person> person = peopleRepository.findById(id);
+        if (person.isPresent()){
+            Hibernate.initialize(person.get().getBooks());
+            person.get().getBooks().forEach(book -> {
+                LocalDateTime currentTime = LocalDateTime.now();
+                int daysWasTaken = (int) Duration.between(book.getWasTakenAt(),currentTime).toDays();
+                book.setDaysUntilReturn(10-daysWasTaken < 0 ? 0 : 10-daysWasTaken);
+                if (daysWasTaken > 10) {
+                    book.setOverdue(true);
+                }
+            });
+            return person.get().getBooks();
+        }
+        else return Collections.emptyList();
     }
     public Optional<Person> findOne(String name) {
         return peopleRepository.findByName(name);
@@ -46,6 +66,9 @@ public class PeopleService {
     }
     @Transactional
     public void delete(int id){
+        peopleRepository.findById(id).get().getBooks().forEach(book -> {
+            book.setWasTakenAt(null);
+        });
         peopleRepository.deleteById(id);
     }
 
@@ -76,5 +99,4 @@ public class PeopleService {
         }
         return new PageImpl<>(list,PageRequest.of(currentPage, pageSize), people.size());
     }
-
 }

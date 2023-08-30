@@ -36,6 +36,8 @@ public class Book {
 
     @Transient
     private boolean isOverdue;
+    @Transient
+    private int daysUntilReturn;
 
     public Book() {
     }
@@ -90,18 +92,20 @@ public class Book {
     }
 
     public boolean isOverdue() {
-        if (getWasTakenAt()==null || getDaysWasTaken() <= 10) return false;
-        return true;
+        return isOverdue;
     }
-    public int getDaysUntilReturn(){
-        int daysUntilReturn = 10 - getDaysWasTaken();
-        if (daysUntilReturn < 0) return 0;
+    public void setOverdue(boolean overdue) {
+        isOverdue = overdue;
+    }
+
+    public int getDaysUntilReturn() {
         return daysUntilReturn;
     }
-    private int getDaysWasTaken(){
-        LocalDateTime currentTime = LocalDateTime.now();
-        return (int) Duration.between(getWasTakenAt(),currentTime).toDays();
+
+    public void setDaysUntilReturn(int daysUntilReturn) {
+        this.daysUntilReturn = daysUntilReturn;
     }
+
     public void setOwner(Person owner) {
         this.owner = owner;
     }

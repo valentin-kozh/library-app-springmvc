@@ -23,7 +23,6 @@
         <hr/>
     </div>
 <br/>
-
     <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getId()})}" th:object="${person}">
         <input type="submit" value="Редактировать">
     </form>
